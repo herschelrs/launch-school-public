@@ -1,1 +1,1 @@
-This repository holds for my exercises and work for Launch School.
+This repository is for my exercises and work for Launch School.
