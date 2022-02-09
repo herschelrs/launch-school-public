@@ -1,8 +1,15 @@
 let rlSync = require('readline-sync');
-console.log("Welcome to the calculator.");
-let num1 = Number(rlSync.question("What is the first number?\n"));
-let num2 = Number(rlSync.question("What is the second number?\n"));
-let operation = rlSync.question("What operation would you like to perform?\n1. Addition 2. Subtraction 3. Multiplication 4. Division"\n);
+function prompt(message) {
+  console.log(`==> ${message}`);
+}
+
+prompt("Welcome to the calculator.");
+prompt("What is the first number?");
+let num1 = Number(rlSync.prompt());
+prompt("What is the second number?");
+let num2 = Number(rlSync.prompt());
+prompt("What operation would you like to perform?\n1. Addition 2. Subtraction 3. Multiplication 4. Division")
+let operation = rlSync.prompt();
 let output;
 switch (operation) {
   case "1":
@@ -18,4 +25,4 @@ switch (operation) {
     output = num1 / num2;
     break;
 }
-console.log(`The output is ${output}.`);
+prompt(`The output is ${output}.`);
