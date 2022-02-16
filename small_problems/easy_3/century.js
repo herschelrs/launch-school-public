@@ -1,8 +1,16 @@
 function century(year) {
   let cent = Math.ceil(year / 100);
-  let output = cent.toString;
+  
+  return cent.toString() + ending(cent);
+}
+
+function ending(centuryNum) {
   const endings = {1: "st", 2: "nd", 3: "rd", 4: "th", 5: "th", 6: "th", 7: "th", 8: "th", 9: "th", 0: "th"};
-  return cent.toString() + endings[cent % 10];
+  if ([11,12,13].includes(centuryNum % 100)) {
+    return "th";
+  } else {
+    return endings[centuryNum % 10];
+  }
 }
 
 console.log(century(2000));        // "20th"
