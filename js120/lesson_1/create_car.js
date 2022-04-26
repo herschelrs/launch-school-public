@@ -1,5 +1,8 @@
 function createCar(make, fuel, engine) {
-  return {"make": make, fuelLevel: fuel, engineOn: engine,
+  return {
+  "make": make,
+  fuelLevel: fuel,
+  engineOn: engine,
     startEngine() {
       this.engineOn = true;
     },
@@ -18,3 +21,6 @@ function createCar(make, fuel, engine) {
     },
   };
 }
+
+let jag = createCar("Jaguar", 0.4, "off");
+console.log(jag);
