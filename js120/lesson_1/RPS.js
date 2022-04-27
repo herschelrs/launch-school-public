@@ -1,11 +1,17 @@
 const readline = require('readline-sync');
+const moves = {
+  rock: ['lizard', 'scissors'],
+  paper: ['spock', 'rock'],
+  scissors: ['lizard', 'paper'],
+  spock: ['rock', 'scissors'],
+  lizard: ['spock', 'paper']
+};
 
 function createComputer() {
   let playerObject = createPlayer();
 
   let computerObject = {
-    choose() {
-      const choices = ['rock', 'paper', 'scissors'];
+    choose(choices) {
       let randomIndex = Math.floor(Math.random() * choices.length);
       this.move = choices[randomIndex];
     },
@@ -17,13 +23,14 @@ function createHuman() {
   let playerObject = createPlayer();
 
   let humanObject = {
-    choose() {
+    choose(choices) {
       let choice;
 
       while (true) {
-        console.log('Please choose rock, paper or scissors:');
+        console.log(`Please choose ${choices.slice(0, choices.length - 1)
+          .join(", ")} or ${choices[choices.length - 1]}:`);
         choice = readline.question();
-        if (['rock', 'paper', 'scissors'].includes(choice)) break;
+        if (choices.includes(choice)) break;
         console.log("Sorry, that choice is not valid.");
       }
 
@@ -60,7 +67,6 @@ function createPlayer() {
 const RPSGame = {
   human: createHuman(),
   computer: createComputer(),
-  
 
   displayWelcomeMessage() {
     console.log("Welcome to my Rock Paper Scissors game!");
@@ -74,14 +80,10 @@ const RPSGame = {
     console.log(`You chose ${humanMove}.`);
     console.log(`The computer chose ${computerMove}.`);
 
-    if ((humanMove === 'rock' && computerMove === 'scissors') ||
-        (humanMove === 'paper' && computerMove === 'rock') ||
-        (humanMove === 'scissors' && computerMove === 'paper')) {
+    if (moves[humanMove].includes(computerMove)) {
       this.human.wins += 1;
       console.log("You win!");
-    } else if ((humanMove === 'rock' && computerMove === 'paper') ||
-    (humanMove === 'paper' && computerMove === 'scissors') ||
-    (humanMove === 'scissors' && computerMove === 'rock')) {
+    } else if (moves[computerMove].includes(humanMove)) {
       this.computer.wins += 1;
       console.log("Computer Wins!");
     } else {
@@ -107,8 +109,8 @@ const RPSGame = {
   play() {
     this.displayWelcomeMessage();
     while (true) {
-      this.human.choose();
-      this.computer.choose();
+      this.human.choose(Object.keys(moves));
+      this.computer.choose(Object.keys(moves));
       this.displayWinner();
       this.displayGoodbyeMessage();
       if (this.isWinner()) {
