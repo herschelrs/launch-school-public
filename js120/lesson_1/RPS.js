@@ -7,13 +7,41 @@ const moves = {
   lizard: ['spock', 'paper']
 };
 
+function concatPretty(arr, lastWord = 'or') {
+  return `${arr.slice(0, arr.length - 1).join(", ")} ${lastWord} ${arr[arr.length - 1]}`;
+}
+
+function bestMove(history) {
+  let moveList = Object.keys(moves);
+  if (history.length === 0) return null;
+  let tally = {};
+  for (let histMove of history) {
+    for (let move in moves) {
+      if (moves[move].includes(histMove)) {
+        tally[move] = tally[move] ? tally[move] + 1 : 1;
+      }
+    }
+  }
+  let bestRank = Math.max(...Object.values(tally));
+  let bestMoves = moveList.filter(x => tally[x] === bestRank);
+  return bestMoves[Math.floor(Math.random() * bestMoves.length)];
+}
+
+console.log(bestMove('rock paper rock rock paper scissors spock'.split(' ')));
+
 function createComputer() {
   let playerObject = createPlayer();
 
   let computerObject = {
-    choose(choices) {
-      let randomIndex = Math.floor(Math.random() * choices.length);
-      this.move = choices[randomIndex];
+
+    choose(choices, history) {
+      let best = bestMove(history);
+      if (!best) {
+        let randomIndex = Math.floor(Math.random() * choices.length);
+        this.move = choices[randomIndex];
+      } else {
+        this.move = bestMove(history);
+      }
     },
   };
   return Object.assign(playerObject, computerObject);
@@ -27,8 +55,7 @@ function createHuman() {
       let choice;
 
       while (true) {
-        console.log(`Please choose ${choices.slice(0, choices.length - 1)
-          .join(", ")} or ${choices[choices.length - 1]}:`);
+        console.log(`Please choose ${concatPretty(choices)}:`);
         choice = readline.question();
         if (choices.includes(choice)) break;
         console.log("Sorry, that choice is not valid.");
@@ -41,26 +68,11 @@ function createHuman() {
   return Object.assign(playerObject, humanObject);
 }
 
-function createMove() {
-  return {
-
-  };
-}
-
-function createRule() {
-  return {
-
-  };
-}
-
-function compare(move1, move2) {
-
-}
-
 function createPlayer() {
   return {
     move: null,
     wins: 0,
+    history: [],
   };
 }
 
@@ -76,7 +88,9 @@ const RPSGame = {
   },
   displayWinner() {
     let humanMove = this.human.move;
+    this.human.history.push(humanMove);
     let computerMove = this.computer.move;
+    this.computer.history.push(computerMove);
     console.log(`You chose ${humanMove}.`);
     console.log(`The computer chose ${computerMove}.`);
 
@@ -105,12 +119,16 @@ const RPSGame = {
       console.log("The computer got five points first, you lost the match.");
     }
   },
+  displayHistory() {
+    console.log(`The computer played: ${concatPretty(this.computer.history, 'and')}.`);
+    console.log(`You played: ${concatPretty(this.human.history, 'and')}`);
+  },
 
   play() {
     this.displayWelcomeMessage();
     while (true) {
       this.human.choose(Object.keys(moves));
-      this.computer.choose(Object.keys(moves));
+      this.computer.choose(Object.keys(moves), this.human.history);
       this.displayWinner();
       this.displayGoodbyeMessage();
       if (this.isWinner()) {
@@ -119,6 +137,7 @@ const RPSGame = {
       }
       if (!this.playAgain()) break;
     }
+    this.displayHistory();
   },
 };
 
