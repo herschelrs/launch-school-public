@@ -142,3 +142,4 @@ const RPSGame = {
 };
 
 RPSGame.play();
+
