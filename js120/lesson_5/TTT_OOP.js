@@ -1,4 +1,7 @@
 const readline = require('readline-sync');
+function concatPretty(arr, lastWord = 'or') {
+  return `${arr.slice(0, arr.length - 1).join(", ")} ${lastWord} ${arr[arr.length - 1]}`;
+}
 
 class Square {
   static UNUSED_SQUARE = " ";
@@ -145,7 +148,7 @@ class TTTGame {
 
     while (true) {
       let validChoices = this.board.unusedSquares();
-      const prompt = `Choose a square (${validChoices.join(", ")}): `;
+      const prompt = `Choose a square (${concatPretty(validChoices)}): `;
       choice = readline.question(prompt);
 
       if (validChoices.includes(choice)) break;
