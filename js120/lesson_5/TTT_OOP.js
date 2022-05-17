@@ -1,6 +1,21 @@
 const readline = require('readline-sync');
+
 function joinOr(arr, delimiter = ', ', lastWord = 'or') {
   return `${arr.slice(0, arr.length - 1).join(delimiter)} ${lastWord} ${arr[arr.length - 1]}`;
+}
+
+function requestInput(requestPrompt, ...validInputs) {
+  console.log(requestPrompt + ` (${joinOr(validInputs)})`);
+  let answer;
+  while (true) {
+    answer = readline.question().toLowerCase()[0];
+    if (!validInputs.includes(answer)) {
+      console.log("Sorry, that's not a valid input. Please choose one of the options: " + `${joinOr(validInputs)}`);
+    } else {
+      break;
+    }
+  }
+  return answer;
 }
 
 class Square {
@@ -208,4 +223,7 @@ class TTTGame {
 }
 
 let game = new TTTGame();
-game.play();
+
+do {
+  game.play();
+} while (requestInput("Would you like to play again?", 'y', 'n'));
