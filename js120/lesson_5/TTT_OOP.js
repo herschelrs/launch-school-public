@@ -46,6 +46,10 @@ class Square {
 
 class Board {
   constructor() {
+    this.initialize();
+  }
+
+  initialize() {
     this.squares = {};
     for (let counter = 1; counter <= 9; ++counter) {
       this.squares[String(counter)] = new Square();
@@ -224,6 +228,6 @@ class TTTGame {
 
 let game = new TTTGame();
 
-do {
-  game.play();
-} while (requestInput("Would you like to play again?", 'y', 'n'));
+game.play();
+
+// while (requestInput("Would you like to play again?", 'y', 'n'));s
