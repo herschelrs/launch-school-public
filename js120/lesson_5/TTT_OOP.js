@@ -202,11 +202,14 @@ class TTTGame {
         if (this.gameOver()) break;
         this.computerMoves();
         if (this.gameOver()) break;
+
         this.board.displayWithClear();
       } else {
         this.computerMoves();
         if (this.gameOver()) break;
+
         this.board.displayWithClear();
+
         this.humanMoves();
         if (this.gameOver()) break;
       }
