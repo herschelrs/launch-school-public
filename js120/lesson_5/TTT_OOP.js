@@ -152,6 +152,7 @@ class TTTGame {
     this.board = new Board();
     this.human = new Human();
     this.computer = new Computer();
+    this.gamesPlayed = 0;
   }
 
   static POSSIBLE_WINNING_ROWS = [
@@ -164,6 +165,8 @@ class TTTGame {
     ['1', '5', '9'],
     ['3', '5', '7']
   ];
+
+  static MATCH_GOAL = 3;
 
   randomMove() {
     let choice;
@@ -194,17 +197,23 @@ class TTTGame {
 
   playOnce() {
     while (true) {
-      this.humanMoves();
-      if (this.gameOver()) break;
-
-      this.computerMoves();
-      if (this.gameOver()) break;
-
-      this.board.displayWithClear();
+      if (this.gamesPlayed % 2 === 0) {
+        this.humanMoves();
+        if (this.gameOver()) break;
+        this.computerMoves();
+        if (this.gameOver()) break;
+        this.board.displayWithClear();
+      } else {
+        this.computerMoves();
+        if (this.gameOver()) break;
+        this.board.displayWithClear();
+        this.humanMoves();
+        if (this.gameOver()) break;
+      }
     }
-
     this.board.displayWithClear();
     this.displayResults();
+    this.gamesPlayed += 1;
   }
 
   humanMoves() {
@@ -280,9 +289,9 @@ class TTTGame {
   }
 
   isMatchWinner() {
-    if (this.human.score === 3) {
+    if (this.human.score === TTTGame.MATCH_GOAL) {
       return this.human;
-    } else if (this.computer.score === 3) {
+    } else if (this.computer.score === TTTGame.MATCH_GOAL) {
       return this.computer;
     } else {
       return false;
