@@ -122,10 +122,15 @@ class Board {
 class Player {
   constructor(marker) {
     this.marker = marker;
+    this.score = 0;
   }
 
   getMarker() {
     return this.marker;
+  }
+
+  incrementScore() {
+    this.score += 1;
   }
 
 }
@@ -174,13 +179,16 @@ class TTTGame {
     this.board.display();
     while (true) {
       this.playOnce();
-      if (!requestInput("Would you like to play again?", 'y', 'n')) {
+      if (this.isMatchWinner()) {
+        break;
+      } else if (!requestInput("Would you like to play again?", 'y', 'n')) {
         break;
       } else {
         this.board.initialize();
         this.board.displayWithClear();
       }
     }
+    this.displayMatchWinner();
     this.displayGoodbyeMessage();
   }
 
@@ -222,7 +230,6 @@ class TTTGame {
       this.computer, Square.UNUSED_SQUARE);
     let humanAlmostWon = this.board.almostWon(TTTGame.POSSIBLE_WINNING_ROWS,
       this.human, Square.UNUSED_SQUARE);
-    debugger;
 
     if (computerAlmostWon) {
       choice = computerAlmostWon;
@@ -249,8 +256,10 @@ class TTTGame {
   displayResults() {
     if (this.isWinner(this.human)) {
       console.log("You win!");
+      this.human.incrementScore();
     } else if (this.isWinner(this.computer)) {
       console.log("Computer Wins! Silly human!");
+      this.computer.incrementScore();
     } else {
       console.log("Tie...");
     }
@@ -266,9 +275,28 @@ class TTTGame {
     return this.board.isFull() || this.someoneWon();
   }
 
-
   someoneWon() {
     return this.isWinner(this.human) || this.isWinner(this.computer);
+  }
+
+  isMatchWinner() {
+    if (this.human.score === 3) {
+      return this.human;
+    } else if (this.computer.score === 3) {
+      return this.computer;
+    } else {
+      return false;
+    }
+  }
+
+  displayMatchWinner() {
+    let winner = this.isMatchWinner();
+    debugger;
+    if (winner === this.human) {
+      console.log("You won best of three!");
+    } else {
+      console.log("Computer won best of three, hyooomahhnn");
+    }
   }
 }
 
