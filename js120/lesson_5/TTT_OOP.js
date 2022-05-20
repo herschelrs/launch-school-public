@@ -210,10 +210,13 @@ class TTTGame {
   computerMoves() {
     let choice;
     let validChoices = this.board.unusedSquares();
+    let computerAlmostWon = this.board.almostWon(TTTGame.POSSIBLE_WINNING_ROWS,
+      this.computer, Square.UNUSED_SQUARE);
     let humanAlmostWon = this.board.almostWon(TTTGame.POSSIBLE_WINNING_ROWS,
       this.human, Square.UNUSED_SQUARE);
-
-    if (humanAlmostWon) {
+    if (computerAlmostWon) {
+      choice = computerAlmostWon;
+    } else if (humanAlmostWon) {
       choice = humanAlmostWon;
     } else {
       do {
