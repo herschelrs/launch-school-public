@@ -100,6 +100,23 @@ class Board {
     return markers.length;
   }
 
+  almostWon(rows, player, neutralMarker) {
+    let marker = player.getMarker();
+    for (let row of rows) {
+      let rowValues = row.map(x => this.squares[x].toString());
+      let isDangerous = (rowValues.filter(y => y === marker).length === 2 &&
+        rowValues.filter(z => z === neutralMarker));
+      if (isDangerous) {
+        console.log("foo");
+        for (let key of row) {
+          if (this.squares[key].toString() === neutralMarker) {
+            return key;
+          }
+        }
+      }
+    }
+    return 0;
+  }
 }
 
 class Player {
@@ -191,12 +208,18 @@ class TTTGame {
   }
 
   computerMoves() {
-    let validChoices = this.board.unusedSquares();
     let choice;
+    let validChoices = this.board.unusedSquares();
+    let humanAlmostWon = this.board.almostWon(TTTGame.POSSIBLE_WINNING_ROWS,
+      this.human, Square.UNUSED_SQUARE);
 
-    do {
-      choice = Math.floor((9 * Math.random()) + 1).toString();
-    } while (!validChoices.includes(choice));
+    if (humanAlmostWon) {
+      choice = humanAlmostWon;
+    } else {
+      do {
+        choice = Math.floor((9 * Math.random()) + 1).toString();
+      } while (!validChoices.includes(choice));
+    }
 
     this.board.markSquareAt(choice, this.computer.getMarker());
   }
@@ -238,7 +261,4 @@ class TTTGame {
 }
 
 let game = new TTTGame();
-
 game.play();
-
-// while (requestInput("Would you like to play again?", 'y', 'n'));s
