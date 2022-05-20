@@ -146,7 +146,19 @@ class TTTGame {
   play() {
     this.displayWelcomeMessage();
     this.board.display();
+    while (true) {
+      this.playOnce();
+      if (!requestInput("Would you like to play again?", 'y', 'n')) {
+        break;
+      } else {
+        this.board.initialize();
+        this.board.displayWithClear();
+      }
+    }
+    this.displayGoodbyeMessage();
+  }
 
+  playOnce() {
     while (true) {
       this.humanMoves();
       if (this.gameOver()) break;
@@ -159,7 +171,6 @@ class TTTGame {
 
     this.board.displayWithClear();
     this.displayResults();
-    this.displayGoodbyeMessage();
   }
 
   humanMoves() {
