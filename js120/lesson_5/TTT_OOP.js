@@ -160,6 +160,15 @@ class TTTGame {
     ['3', '5', '7']
   ];
 
+  randomMove() {
+    let choice;
+    let validChoices = this.board.unusedSquares();
+    do {
+      choice = Math.floor((9 * Math.random()) + 1).toString();
+    } while (!validChoices.includes(choice));
+    return choice;
+  }
+
   play() {
     this.displayWelcomeMessage();
     this.board.display();
@@ -209,21 +218,21 @@ class TTTGame {
 
   computerMoves() {
     let choice;
-    let validChoices = this.board.unusedSquares();
     let computerAlmostWon = this.board.almostWon(TTTGame.POSSIBLE_WINNING_ROWS,
       this.computer, Square.UNUSED_SQUARE);
     let humanAlmostWon = this.board.almostWon(TTTGame.POSSIBLE_WINNING_ROWS,
       this.human, Square.UNUSED_SQUARE);
+    debugger;
+
     if (computerAlmostWon) {
       choice = computerAlmostWon;
     } else if (humanAlmostWon) {
       choice = humanAlmostWon;
+    } else if (this.board.squares[5].toString() === Square.UNUSED_SQUARE) {
+      choice = 5;
     } else {
-      do {
-        choice = Math.floor((9 * Math.random()) + 1).toString();
-      } while (!validChoices.includes(choice));
+      choice = this.randomMove();
     }
-
     this.board.markSquareAt(choice, this.computer.getMarker());
   }
 
