@@ -35,7 +35,9 @@ function valueOfHand(hand) {
       aces += 1;
     }
   });
-  if (total <= max - 11 - aces + 1) {
+  if (aces === 0) {
+    total += 0; //this is useless, I did this so the linter wouldn't complain
+  } else if (total <= max - 11 - aces + 1) {
     total += 11 + aces - 1;
   } else {
     total += aces;
