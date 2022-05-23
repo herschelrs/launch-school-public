@@ -2,6 +2,7 @@ const readline = require('readline-sync');
 
 class Deck {
   constructor() {
+    this.cards = [];
     this.initializeDeck();
   }
 
@@ -17,10 +18,10 @@ class Deck {
     this.cards = newDeck.flat();
   }
 
-  randomizeDeck() {
-  }
-
   deal() {
+    if (this.cards.length === 0) {
+      this.initializeDeck();
+    }
     return this.cards.pop();
   }
 
@@ -55,18 +56,22 @@ class TwentyOneGame {
 
   start() {
     this.displayWelcomeMessage();
-    this.dealCards();
-    this.showCards();
-    this.playerTurn();
-    this.dealerTurn();
-    this.displayResult();
-    // if (!this.playAgain()) {
-    //   break;
-    // }
+    do {
+      this.dealCards();
+      this.showCards();
+      this.playerTurn();
+      this.dealerTurn();
+      this.displayResult();
+    } while (!this.isMatchOver() && this.playAgain());
+    if (this.isMatchOver()) {
+      this.displayMatchResult();
+    }
     this.displayGoodbyeMessage();
   }
 
   dealCards() {
+    this.player.resetHand();
+    this.dealer.resetHand();
     this.player.hit(this.deck);
     this.player.hit(this.deck);
     this.dealer.hit(this.deck);
@@ -100,9 +105,12 @@ class TwentyOneGame {
     }
   }
 
+  isMatchOver() {
+    return (this.player.dollars <= 0) || (this.player.dollars >= 10);
+  }
+
   playAgain() {
-    // stub
-    // will need to do the request thing
+    return TwentyOneGame.requestInput("Would you like to play again?", 'y', 'n') === 'y';
   }
 
   dealerTurn() {
@@ -115,15 +123,48 @@ class TwentyOneGame {
   }
 
   displayWelcomeMessage() {
-    // stub
+    console.log("Welcome to Twenty-One!");
+    console.log("You start out with five dollars.");
+    console.log('');
   }
 
   displayGoodbyeMessage() {
-    // stub
+    console.log("Thanks for playing Twenty-One!");
+  }
+
+  displayMatchResult() {
+    if (this.player.dollars <= 0) {
+      console.log("You're broke!");
+    } else {
+      console.log("You have $10, you're rich! Game over!");
+    }
+  }
+
+  gameResult() {
+    if (this.player.isBusted()) {
+      this.player.dollars -= 1;
+      return 'dealer';
+    } else if (this.dealer.isBusted()) {
+      this.player.dollars += 1;
+      return 'player';
+    } else if (this.player.score() > this.dealer.score()) {
+      this.player.dollars += 1;
+      return 'player';
+    } else {
+      this.player.dollars -= 1;
+      return 'dealer';
+    }
   }
 
   displayResult() {
-    // stub
+    let winner = this.gameResult();
+    if (winner === 'player') {
+      console.log("You won!");
+    } else {
+      console.log("Dealer won!");
+    }
+    console.log(`Your final hand was ${this.player.handToString()}, and your score was ${this.player.score()}. You now have $${this.player.dollars}.`);
+    console.log(`The dealer's final hand was ${this.dealer.handToString()}, and their score was ${this.dealer.score()}`);
   }
 
   static joinOr(arr, delimiter = ', ', lastWord = 'and') {
@@ -133,6 +174,10 @@ class TwentyOneGame {
 
 class Participant {
   constructor() {
+    this.hand = [];
+  }
+
+  resetHand() {
     this.hand = [];
   }
 
@@ -176,7 +221,6 @@ class Player extends Participant {
     super();
     this.dollars = 5;
   }
-
 }
 
 class Dealer extends Participant {
