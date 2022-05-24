@@ -59,6 +59,7 @@ class TwentyOneGame {
     do {
       this.dealCards();
       this.showCards();
+      console.log('');
       this.playerTurn();
       if (!this.player.isBusted()) {
         this.dealerTurn();
@@ -81,19 +82,14 @@ class TwentyOneGame {
   }
 
   showCards() {
-    console.log('');
-    console.log(`The dealer's first card is ${this.dealer.hand[0]}. Your ${this.player.scoreHandToString}.`);
+    console.log(`The dealer's first card is ${this.dealer.hand[0]}. Your ${this.player.scoreHandToString()}.`);
   }
 
   playerTurn() {
-    while (this.player.score() < TwentyOneGame.MAX_SCORE) {
-      console.log(`Your ${this.player.scoreHandToString()}.`);
-      let choice = TwentyOneGame.requestInput("Would you like to hit?", 'y', 'n');
-      if (choice === 'y') {
-        this.player.hit(this.deck);
-      } else {
-        return;
-      }
+    let shouldHit = this.player.requestHit(this.deck);
+    while (this.player.score() < TwentyOneGame.MAX_SCORE && shouldHit) {
+      this.showCards();
+      shouldHit = this.player.requestHit(this.deck);
     }
     if (this.player.score() === TwentyOneGame.MAX_SCORE) {
       console.log(`Your score is exactly ${TwentyOneGame.MAX_SCORE}.`);
@@ -236,6 +232,16 @@ class Player extends Participant {
     super();
     this.dollars = 5;
   }
+
+  requestHit(deck) {
+    let choice = TwentyOneGame.requestInput("Would you like to hit or stay?", 'h', 's');
+    if (choice === 'h') {
+      this.hit(deck);
+      return true;
+    } else {
+      return false;
+    }
+  }
 }
 
 class Dealer extends Participant {
@@ -248,8 +254,8 @@ class Dealer extends Participant {
   }
 
   displayHandAndEnter() {
-    console.log(`The dealer's ${this.scoreHandToString()}`);
-    readline.question("Hit enter to see the dealer's move.");
+    console.log(`The dealer's ${this.scoreHandToString()}.`);
+    readline.question("Press enter to see the dealer's move.");
   }
 }
 
