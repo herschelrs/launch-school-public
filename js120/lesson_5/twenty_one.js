@@ -60,7 +60,9 @@ class TwentyOneGame {
       this.dealCards();
       this.showCards();
       this.playerTurn();
-      this.dealerTurn();
+      if (!this.player.isBusted()) {
+        this.dealerTurn();
+      }
       this.displayResult();
     } while (!this.isMatchOver() && this.playAgain());
     if (this.isMatchOver()) {
@@ -79,12 +81,13 @@ class TwentyOneGame {
   }
 
   showCards() {
-    console.log(`The dealer's first card is ${this.dealer.hand[0]}. Your hand is ${this.player.handToString()}.`);
+    console.log('');
+    console.log(`The dealer's first card is ${this.dealer.hand[0]}. Your ${this.player.scoreHandToString}.`);
   }
 
   playerTurn() {
     while (this.player.score() < TwentyOneGame.MAX_SCORE) {
-      console.log(`Your hand is ${this.player.handToString()}. Your score is ${this.player.score()}.`);
+      console.log(`Your ${this.player.scoreHandToString()}.`);
       let choice = TwentyOneGame.requestInput("Would you like to hit?", 'y', 'n');
       if (choice === 'y') {
         this.player.hit(this.deck);
@@ -94,6 +97,8 @@ class TwentyOneGame {
     }
     if (this.player.score() === TwentyOneGame.MAX_SCORE) {
       console.log(`Your score is exactly ${TwentyOneGame.MAX_SCORE}.`);
+    } else if (this.player.isBusted()) {
+      console.log("You busted!");
     }
   }
 
@@ -110,22 +115,28 @@ class TwentyOneGame {
   }
 
   playAgain() {
-    return TwentyOneGame.requestInput("Would you like to play again?", 'y', 'n') === 'y';
+    let answer = TwentyOneGame.requestInput("Would you like to play again?", 'y', 'n') === 'y';
+    console.clear();
+    return answer;
   }
 
   dealerTurn() {
-    if (this.player.isBusted()) {
-      return;
-    }
+    this.dealer.displayHandAndEnter();
     while (this.dealer.score() < 17) {
       this.dealer.hit(this.deck);
+      console.log("The dealer hits.");
+      if (this.dealer.isBusted()) {
+        console.log("The dealer busted!");
+        return;
+      }
+      this.dealer.displayHandAndEnter();
     }
+    this.dealer.stay();
   }
 
   displayWelcomeMessage() {
     console.log("Welcome to Twenty-One!");
     console.log("You start out with five dollars.");
-    console.log('');
   }
 
   displayGoodbyeMessage() {
@@ -163,8 +174,8 @@ class TwentyOneGame {
     } else {
       console.log("Dealer won!");
     }
+    console.log(`The dealer's final hand was ${this.dealer.handToString()}, and their score was ${this.dealer.score()}.`);
     console.log(`Your final hand was ${this.player.handToString()}, and your score was ${this.player.score()}. You now have $${this.player.dollars}.`);
-    console.log(`The dealer's final hand was ${this.dealer.handToString()}, and their score was ${this.dealer.score()}`);
   }
 
   static joinOr(arr, delimiter = ', ', lastWord = 'and') {
@@ -183,6 +194,10 @@ class Participant {
 
   hit(deck) {
     this.hand.push(deck.deal());
+  }
+
+  scoreHandToString() {
+    return `hand is ${this.handToString()}, total score ${this.score()}`;
   }
 
   handToString() {
@@ -226,20 +241,18 @@ class Player extends Participant {
 class Dealer extends Participant {
   constructor() {
     super();
-    // stub
+  }
+
+  stay() {
+    console.log("The dealer stays.");
+  }
+
+  displayHandAndEnter() {
+    console.log(`The dealer's ${this.scoreHandToString()}`);
+    readline.question("Hit enter to see the dealer's move.");
   }
 }
 
 
 let game = new TwentyOneGame();
 game.start();
-// // console.log(game.deck)
-
-// console.log(game.dealer)
-
-// let answer = TwentyOneGame.requestInput("sup", 'y', 'n')
-
-// let someGuy = new Player();
-// let myDeck = new Deck();
-// someGuy.hit(myDeck);
-// console.log(someGuy.isBusted())
