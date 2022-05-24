@@ -157,9 +157,11 @@ class TwentyOneGame {
     } else if (this.player.score() > this.dealer.score()) {
       this.player.dollars += 1;
       return 'player';
-    } else {
+    } else if (this.player.score() < this.dealer.score()) {
       this.player.dollars -= 1;
       return 'dealer';
+    } else {
+      return "tie";
     }
   }
 
@@ -167,8 +169,10 @@ class TwentyOneGame {
     let winner = this.gameResult();
     if (winner === 'player') {
       console.log("You won!");
-    } else {
+    } else if (winner === 'dealer') {
       console.log("Dealer won!");
+    } else {
+      console.log("It was a tie.");
     }
     console.log(`The dealer's final hand was ${this.dealer.handToString()}, and their score was ${this.dealer.score()}.`);
     console.log(`Your final hand was ${this.player.handToString()}, and your score was ${this.player.score()}. You now have $${this.player.dollars}.`);
